@@ -3,6 +3,7 @@ exports.up = function (knex) {
     table.increments("id").primary();
     table.string("username").notNullable();
     table.string("email").notNullable().unique();
+    table.string("password_hash").notNullable();
     table.string("location");
     table.text("bio");
     table.string("profile_photo");

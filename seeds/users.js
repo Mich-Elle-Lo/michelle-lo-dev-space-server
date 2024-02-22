@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
@@ -8,38 +9,44 @@ exports.seed = async function (knex) {
   await knex("posts").del();
   await knex("users").del();
 
+  const password1 = bcrypt.hashSync("password123", 10);
+
   await knex("users").insert([
     {
       id: 1,
       username: "mich.elle.lo",
       email: "michellelo@live.ca",
+      password_hash: password1,
       location: "Silicon Valley",
       bio: "Lover of all things tech, from AI to zero-day exploits.",
       profile_photo:
-        "https://unsplash.com/photos/macro-photography-of-human-eye-In4XVKhYaiI",
+        "https://images.unsplash.com/photo-1531539134685-27d854339120?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
     {
       id: 2,
       username: "sheCodes",
       email: "sheCodes@lovecode.com",
+      password_hash: password1,
       location: "Seattle",
       bio: "Full-stack developer and coffee enthusiast. Dream in JavaScript.",
       profile_photo:
-        "https://unsplash.com/photos/closeup-photography-of-woman-smiling-mEZ3PoFGs_k",
+        "https://images.unsplash.com/photo-1564865878688-9a244444042a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
     {
       id: 3,
       username: "BenCoder",
       email: "BenCoder@example.com",
+      password_hash: password1,
       location: "New York",
       bio: "UI/UX designer with a passion for creating intuitive user experiences.",
       profile_photo:
-        "https://unsplash.com/photos/boys-face-close-up-photography-n4KewLKFOZw",
+        "https://images.unsplash.com/photo-1535223289827-42f1e9919769?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
     {
       id: 4,
       username: "Albert Lo",
       email: "Albert_Lo@example.com",
+      password_hash: password1,
       location: "New York",
       bio: "Doggy that is obsessed with codes. Throw me a code!",
       profile_photo:
