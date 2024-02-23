@@ -3,20 +3,36 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const { faker } = require("@faker-js/faker");
 const knex = require("knex")(require("../knexfile").development);
+const { uploadPost, uploadAvatar } = require("./multerConfig");
 
 router.get("/users", async (req, res) => {
   try {
+    const baseUrl = process.env.SERVER_BASE_URL || "http://localhost:3000";
     const users = await knex("users").select("*");
-    res.json(users);
+
+    const usersProfile = users.map((user) => {
+      if (user.profile_photo && !user.profile_photo.startsWith("http")) {
+        user.profile_photo = `${baseUrl}/${user.profile_photo}`;
+      }
+      return user;
+    });
+
+    if (usersProfile.length) {
+      res.json(usersProfile);
+    } else {
+      res.status(404).json({ error: "Users not found" });
+    }
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
 // reigster
-router.post("/register", async (req, res) => {
+router.post("/register", uploadAvatar.single("avatar"), async (req, res) => {
   const { username, email, password, location, bio } = req.body;
   const hashedPassword = await bcrypt.hash(password, 12);
+  const profile_photo = req.file ? req.file.path : null;
 
   try {
     const [userId] = await knex("users")
@@ -26,11 +42,13 @@ router.post("/register", async (req, res) => {
         password_hash: hashedPassword,
         location,
         bio,
-        profile_photo: faker.image.urlLoremFlickr({ category: "dog" }),
+        profile_photo,
       })
       .returning("id");
+
     res.status(201).send({ userId });
   } catch (error) {
+    console.error(error);
     res.status(500).send("Error registering user");
   }
 });
@@ -41,11 +59,18 @@ router.get("/users/:id", async (req, res) => {
   try {
     const user = await knex("users").where({ id }).first();
     if (user) {
+      const baseUrl = process.env.SERVER_BASE_URL || "http://localhost:3000";
+
+      if (user.profile_photo && !user.profile_photo.startsWith("http")) {
+        user.profile_photo = `${baseUrl}/${user.profile_photo}`;
+      }
+
       res.json(user);
     } else {
       res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -75,7 +100,11 @@ router.get("/posts", async (req, res) => {
   try {
     let posts = await knex("posts")
       .join("users", "posts.user_id", "users.id")
-      .select("posts.*", "users.username as username")
+      .select(
+        "posts.*",
+        "users.username as username",
+        "users.profile_photo as profile_photo"
+      )
       .orderBy("posts.created_at", "desc");
 
     const baseUrl = process.env.SERVER_BASE_URL || "http://10.0.0.108:3000";
@@ -84,7 +113,11 @@ router.get("/posts", async (req, res) => {
       ...post,
       photo: post.photo.startsWith("http")
         ? post.photo
-        : `${baseUrl}${post.photo}`,
+        : `${baseUrl}/${post.photo}`,
+      profile_photo: post.profile_photo.startsWith("http")
+        ? post.profile_photo
+        : `${baseUrl}/${post.profile_photo}`,
+      is_video: post.photo.endsWith(".mp4"),
     }));
 
     // Fetch comments for each post
@@ -109,55 +142,70 @@ router.get("/posts", async (req, res) => {
   }
 });
 
-//multer for photo upload
-const multer = require("multer");
-const path = require("path");
+// get posts with comments for a user
+router.get("/users/:userId/posts", async (req, res) => {
+  const { userId } = req.params;
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../uploads"));
-  },
-  filename: function (req, file, cb) {
-    const userId = req.body.user_id;
-    const uniqueSuffix =
-      userId + "_" + Date.now() + path.extname(file.originalname);
-    cb(null, uniqueSuffix);
-  },
-});
-const fileFilter = (req, file, cb) => {
-  if (
-    file.mimetype.startsWith("image/") ||
-    file.mimetype.startsWith("video/")
-  ) {
-    cb(null, true);
-  } else {
-    cb(new Error("Not an image or video file"), false);
+  try {
+    let posts = await knex("posts")
+      .where("posts.user_id", userId)
+      .join("users", "posts.user_id", "users.id")
+      .select(
+        "posts.*",
+        "users.username as username",
+        "users.profile_photo as profile_photo"
+      )
+      .orderBy("posts.created_at", "desc");
+
+    const baseUrl = process.env.SERVER_BASE_URL || "http://10.0.0.108:3000";
+
+    posts = posts.map((post) => ({
+      ...post,
+      photo: post.photo.startsWith("http")
+        ? post.photo
+        : `${baseUrl}/${post.photo}`,
+      profile_photo: post.profile_photo.startsWith("http")
+        ? post.profile_photo
+        : `${baseUrl}/${post.profile_photo}`,
+      is_video: post.photo.endsWith(".mp4"),
+    }));
+
+    // Fetch comments for each post
+    const postsWithComments = await Promise.all(
+      posts.map(async (post) => {
+        const comments = await knex("comments")
+          .where({ post_id: post.id })
+          .join("users", "comments.user_id", "=", "users.id")
+          .select("comments.*", "users.username as commenter")
+          .orderBy("comments.created_at", "desc");
+
+        return {
+          ...post,
+          comments,
+        };
+      })
+    );
+
+    res.json(postsWithComments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "server error" });
   }
-};
-
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fieldNameSize: 500,
-    fieldSize: 1024 * 1024 * 10,
-    fileSize: 1024 * 1024 * 100,
-  },
 });
 
 //post post
-router.post("/posts", upload.single("photo"), async (req, res) => {
+router.post("/posts", uploadPost.single("photo"), async (req, res) => {
   const { user_id, caption } = req.body;
   try {
     if (!req.file) {
       throw new Error("File is required");
     }
-    const mediaPath = `/uploads/${req.file.filename}`;
+    const postMediaPath = `/uploads/posts/${req.file.filename}`;
 
     const [newPostId] = await knex("posts").insert({
       user_id,
       caption,
-      photo: mediaPath,
+      photo: postMediaPath,
     });
     const newPost = await knex("posts").where({ id: newPostId }).first();
 
