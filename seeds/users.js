@@ -21,7 +21,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Silicon Valley",
       bio: "Lover of all things tech. And my doggy, Albert <3",
-      profile_photo: "uploads/avatar/MichelleAvatar.JPG",
+      profile_photo: "/uploads/avatar/MichelleAvatar.JPG",
     },
     {
       id: 2,
@@ -30,7 +30,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "The 6IX",
       bio: "Full-stack developer and coffee enthusiast. Dream in JavaScript.",
-      profile_photo: "uploads/avatar/SachieAvatar.jpg",
+      profile_photo: "/uploads/avatar/SachieAvatar.jpg",
     },
     {
       id: 3,
@@ -39,7 +39,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Carrie Bradshaw's Apartment",
       bio: "Lifelong Learner, Coder, Linguistic Enthusiast, Existentialism 🔛 Let’s talk about languages over 🍵 & ☕️ ",
-      profile_photo: "uploads/avatar/AmandaAvatar.jpg",
+      profile_photo: "/uploads/avatar/AmandaAvatar.jpg",
     },
     {
       id: 4,
@@ -48,7 +48,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Living Rent Free @ Mom's",
       bio: "Doggy that is obsessed with codes. Throw me a code!",
-      profile_photo: "uploads/avatar/AlbertAvatar.png",
+      profile_photo: "/uploads/avatar/AlbertAvatar.png",
     },
     {
       id: 5,
@@ -57,7 +57,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Palo Alto",
       bio: "Coder by day...also coder by night",
-      profile_photo: "uploads/avatar/HillaryAvatar.png",
+      profile_photo: "/uploads/avatar/HillaryAvatar.png",
     },
     {
       id: 6,
@@ -66,7 +66,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Toronto",
       bio: "Code magician: I make bugs disappear and features appear. Abracadabra!",
-      profile_photo: "uploads/avatar/IrynaAvatar.png",
+      profile_photo: "/uploads/avatar/IrynaAvatar.png",
     },
     {
       id: 7,
@@ -75,7 +75,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Worldwide",
       bio: "The Perfect Coder: Writes bug-free code on the first try. ",
-      profile_photo: "uploads/avatar/PamelaAvatar.jpg",
+      profile_photo: "/uploads/avatar/PamelaAvatar.jpg",
     },
     {
       id: 8,
@@ -84,7 +84,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Byteville",
       bio: "Diving into code like Alice in Wonderland ",
-      profile_photo: "uploads/avatar/KateW.jpg",
+      profile_photo: "/uploads/avatar/KateW.jpg",
     },
     {
       id: 9,
@@ -93,7 +93,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Always Somewhere New",
       bio: "BrainStation TA: Code mentor by day, tech innovator by night. Shaping the future at Brainstation, one student at a time. ",
-      profile_photo: "uploads/avatar/JordanD.png",
+      profile_photo: "/uploads/avatar/JordanD.png",
     },
     {
       id: 10,
@@ -102,7 +102,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "Binary Bluff",
       bio: "Brainstation TA: Where I transform caffeine into developers and debug dreams into reality.",
-      profile_photo: "uploads/avatar/SaisudanB.png",
+      profile_photo: "/uploads/avatar/SaisudanB.png",
     },
     {
       id: 11,
@@ -111,7 +111,7 @@ exports.seed = async function (knex) {
       password_hash: password1,
       location: "La Salle Script Shores",
       bio: "Your friendly Brainstation TA: decoding the mysteries of code by day, battling bugs by night.",
-      profile_photo: "uploads/avatar/AlexD.png",
+      profile_photo: "/uploads/avatar/AlexD.png",
     },
   ]);
 
@@ -160,13 +160,13 @@ exports.seed = async function (knex) {
     },
     {
       user_id: 5,
-      photo: "uploads/posts/Screenshot 2024-02-22 at 8.20.06 PM.png",
+      photo: "/uploads/posts/Screenshot 2024-02-22 at 8.20.06 PM.png",
       caption:
         "We lost a good one today, he's still around just not teaching us :( #BestEducator",
     },
     {
       user_id: 6,
-      photo: "uploads/posts/Screenshot 2024-02-22 at 8.19.38 PM.png",
+      photo: "/uploads/posts/Screenshot 2024-02-22 at 8.19.38 PM.png",
       caption:
         "Lovely meeting the girls from our cohort at the BrainStation Tech Meetup!!",
     },

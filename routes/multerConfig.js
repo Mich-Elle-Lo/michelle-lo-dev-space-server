@@ -17,7 +17,7 @@ const postStorage = multer.diskStorage({
 // Avatar Storage Config
 const avatarStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../uploads/avatars"));
+    cb(null, path.join(__dirname, "../uploads/avatar"));
   },
   filename: function (req, file, cb) {
     const userId = req.body.user_id;

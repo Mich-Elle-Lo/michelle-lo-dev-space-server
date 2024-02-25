@@ -12,7 +12,7 @@ router.get("/users", async (req, res) => {
 
     const usersProfile = users.map((user) => {
       if (user.profile_photo && !user.profile_photo.startsWith("http")) {
-        user.profile_photo = `${baseUrl}/${user.profile_photo}`;
+        user.profile_photo = `${baseUrl}${user.profile_photo}`;
       }
       return user;
     });
@@ -32,24 +32,28 @@ router.get("/users", async (req, res) => {
 router.post("/register", uploadAvatar.single("avatar"), async (req, res) => {
   const { username, email, password, location, bio } = req.body;
   const hashedPassword = await bcrypt.hash(password, 12);
-  const profile_photo = req.file ? req.file.path : null;
 
   try {
-    const [userId] = await knex("users")
-      .insert({
-        username,
-        email,
-        password_hash: hashedPassword,
-        location,
-        bio,
-        profile_photo,
-      })
-      .returning("id");
+    let profile_photo = null;
+    if (req.file) {
+      profile_photo = `/uploads/avatar/${req.file.filename}`;
+    }
 
-    res.status(201).send({ userId });
+    const [userId] = await knex("users").insert({
+      username,
+      email,
+      password_hash: hashedPassword,
+      location,
+      bio,
+      profile_photo,
+    });
+
+    res
+      .status(201)
+      .json({ userId, message: "User registered successfully", profile_photo });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error registering user");
+    console.error("Registration error:", error);
+    res.status(500).send("Error registering user.");
   }
 });
 
@@ -62,7 +66,7 @@ router.get("/users/:id", async (req, res) => {
       const baseUrl = process.env.SERVER_BASE_URL || "http://localhost:3000";
 
       if (user.profile_photo && !user.profile_photo.startsWith("http")) {
-        user.profile_photo = `${baseUrl}/${user.profile_photo}`;
+        user.profile_photo = `${baseUrl}${user.profile_photo}`;
       }
 
       res.json(user);
@@ -113,10 +117,10 @@ router.get("/posts", async (req, res) => {
       ...post,
       photo: post.photo.startsWith("http")
         ? post.photo
-        : `${baseUrl}/${post.photo}`,
+        : `${baseUrl}${post.photo}`,
       profile_photo: post.profile_photo.startsWith("http")
         ? post.profile_photo
-        : `${baseUrl}/${post.profile_photo}`,
+        : `${baseUrl}${post.profile_photo}`,
       is_video: post.photo.endsWith(".mp4"),
     }));
 
@@ -163,10 +167,10 @@ router.get("/users/:userId/posts", async (req, res) => {
       ...post,
       photo: post.photo.startsWith("http")
         ? post.photo
-        : `${baseUrl}/${post.photo}`,
+        : `${baseUrl}${post.photo}`,
       profile_photo: post.profile_photo.startsWith("http")
         ? post.profile_photo
-        : `${baseUrl}/${post.profile_photo}`,
+        : `${baseUrl}${post.profile_photo}`,
       is_video: post.photo.endsWith(".mp4"),
     }));
 
@@ -254,6 +258,44 @@ router.patch("/users/:userId", async (req, res) => {
     res.status(200).send({ message: "Profile updated successfully" });
   } catch (error) {
     console.error("error updating profile", error);
+  }
+});
+
+//Get job postings
+router.get("/job_postings", async (req, res) => {
+  try {
+    const postings = await knex("job_postings").select("*");
+    res.json(postings);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Unable to fetch job postings" });
+  }
+});
+
+//Post job postings
+router.post("/job_postings", async (req, res) => {
+  try {
+    const posting = await knex("job_postings")
+      .insert({
+        company_id: req.body.company_id,
+        job_title: req.body.job_title,
+        job_description: req.body.job_description,
+        location: req.body.location,
+        salary_range: req.body.salary_range,
+        job_type: req.body.job_type,
+        experience_level: req.body.experience_level,
+        qualifications: req.body.qualifications,
+        industry: req.body.industry,
+        posted_date: req.body.posted_date,
+        expiration_date: req.body.expiration_date,
+        status: req.body.status,
+        application_email_or_link: req.body.application_email_or_link,
+      })
+      .returning("*");
+    res.json(posting);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "Unable to add job posting" });
   }
 });
 
