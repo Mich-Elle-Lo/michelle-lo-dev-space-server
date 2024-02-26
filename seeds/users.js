@@ -113,15 +113,22 @@ exports.seed = async function (knex) {
       bio: "Your friendly Brainstation TA: decoding the mysteries of code by day, battling bugs by night.",
       profile_photo: "/uploads/avatar/AlexD.png",
     },
+    {
+      id: 12,
+      username: "AnkitaAlgorithm",
+      email: "AnkitaAlgorithm@codemail.com",
+      password_hash: password1,
+      location: "Express City",
+      bio: "CodeWhisper. AlgorithmicMaestro.",
+      profile_photo: "/uploads/avatar/Ankita.png",
+    },
   ]);
 
   await knex("posts").insert([
     {
       user_id: 1,
-      photo:
-        "https://plus.unsplash.com/premium_photo-1682824039145-7156993a9bc3?q=80&w=1512&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      caption:
-        "Exploring how AI is reshaping our future. #ArtificialIntelligence",
+      photo: "/uploads/posts/schoolwork.png",
+      caption: "Working on BrainStation projects! #SOMUCHFUN :)",
     },
     {
       user_id: 2,
@@ -130,15 +137,30 @@ exports.seed = async function (knex) {
       caption: "The life of a full-stack developer. #CodeLife",
     },
     {
+      user_id: 9,
+      photo: "/uploads/posts/dooley.png",
+      caption: "DEV SPACE - DOOLEY APPROVED #Golden...Retriever",
+    },
+    {
+      user_id: 12,
+      photo: "/uploads/posts/ankitapark.png",
+      caption: "When not coding, I love to go to the park for some fresh air. ",
+    },
+    {
       user_id: 3,
       photo:
         "https://images.unsplash.com/photo-1576153192396-180ecef2a715?q=80&w=1548&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       caption: "The art and science of UI/UX design. #DesignThinking",
     },
     {
+      user_id: 5,
+      photo: "/uploads/posts/Screenshot 2024-02-22 at 8.20.06 PM.png",
+      caption:
+        "We lost a good one today, he's still around just not teaching us :( #BestEducator",
+    },
+    {
       user_id: 4,
-      photo:
-        "https://images.unsplash.com/photo-1589652717406-1c69efaf1ff8?q=80&w=2340&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      photo: "/uploads/posts/albee.png",
       caption: "Bring your dog to work day! #DogsThatCode",
     },
     {
@@ -149,7 +171,7 @@ exports.seed = async function (knex) {
     },
     {
       user_id: 3,
-      photo: "uploads/posts/VIDEO-2024-02-22-10-51-59.mp4",
+      photo: "/uploads/posts/VIDEO-2024-02-22-10-51-59.mp4",
       caption: "Tech Events #TechIsLife",
     },
     {
@@ -159,10 +181,9 @@ exports.seed = async function (knex) {
       caption: "Working on holiday #GottaGetItDone",
     },
     {
-      user_id: 5,
-      photo: "/uploads/posts/Screenshot 2024-02-22 at 8.20.06 PM.png",
-      caption:
-        "We lost a good one today, he's still around just not teaching us :( #BestEducator",
+      user_id: 3,
+      photo: "/uploads/posts/VIDEO-2024-02-22-10-52-00.mp4",
+      caption: "Love all these great events! #BrainStation",
     },
     {
       user_id: 6,
@@ -174,7 +195,7 @@ exports.seed = async function (knex) {
 
   await knex("comments").insert([
     { post_id: 1, user_id: 2, comment: "Really insightful post!" },
-    { post_id: 1, user_id: 3, comment: "I agree, AI is reshaping our future." },
+    { post_id: 1, user_id: 3, comment: "Love it!!" },
     { post_id: 2, user_id: 1, comment: "Love this! #CodeLife" },
     { post_id: 4, user_id: 4, comment: "Wow, amazing!!" },
     { post_id: 5, user_id: 3, comment: "Sooo cool!!! WOW!" },
@@ -197,7 +218,7 @@ exports.seed = async function (knex) {
         .toISOString()
         .slice(0, 10),
       status: "active",
-      application_email_or_link: "apply@companydomain.com",
+      application_email_or_link: "apply@ibm.com",
     },
     {
       company_id: 1,
@@ -219,21 +240,21 @@ exports.seed = async function (knex) {
     },
     {
       company_id: 2,
-      job_title: "Senior Full Stack Developer",
+      job_title: "Full Stack Developer",
       job_description:
-        "Looking for an experienced full stack developer to lead our web development projects. Must be proficient in JavaScript frameworks.",
+        "BrainStation is looking for a newly graduated full stack developer to assint in our development projects. Must be proficient in JavaScript frameworks.",
       location: "Remote",
       salary_range: "100,000 - 130,000",
       job_type: "Full-time",
-      experience_level: "Senior",
-      qualifications: "5+ years in full stack development.",
+      experience_level: "Junior",
+      qualifications: "Bootcamp Graduates",
       industry: "Software",
       posted_date: new Date().toISOString().split("T")[0],
       expiration_date: new Date(new Date().setMonth(new Date().getMonth() + 1))
         .toISOString()
         .split("T")[0],
       status: "active",
-      application_email_or_link: "careers@webdev.com",
+      application_email_or_link: "careers@BrainStation.io",
     },
     {
       company_id: 3,
