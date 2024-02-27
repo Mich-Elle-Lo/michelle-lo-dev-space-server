@@ -171,7 +171,7 @@ router.get("/users/:userId/posts", async (req, res) => {
       profile_photo: post.profile_photo.startsWith("http")
         ? post.profile_photo
         : `${baseUrl}${post.profile_photo}`,
-      is_video: post.photo.endsWith(".mp4"),
+      is_video: post.photo.endsWith(".mp4") || post.photo.endsWith(".mov"),
     }));
 
     // Fetch comments for each post
@@ -243,6 +243,30 @@ router.post("/posts/:postId/comments", async (req, res) => {
   }
 });
 
+//get likes for post
+router.get("/posts/:postId/likes", async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    const likes = await knex("likes")
+      .where("post_id", postId)
+      .join("users", "likes.user_id", "users.id")
+      .select(
+        "likes.id",
+        "likes.created_at",
+        "users.id as user_id",
+        "users.username",
+        "users.profile_photo"
+      )
+      .orderBy("likes.created_at", "desc");
+
+    res.json({ postId: postId, likes: likes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 //edit user profile
 router.patch("/users/:userId", async (req, res) => {
   const { userId } = req.params;
@@ -296,6 +320,28 @@ router.post("/job_postings", async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Unable to add job posting" });
+  }
+});
+
+//delete post along with comments
+router.delete("/posts/:postId", async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    await knex("comments").where("post_id", postId).delete();
+
+    const deleteCount = await knex("posts").where("id", postId).delete();
+
+    if (deleteCount) {
+      res
+        .status(200)
+        .json({ message: "Post and comments deleted successfully" });
+    } else {
+      res.status(404).json({ error: "Post not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
