@@ -299,23 +299,26 @@ router.get("/job_postings", async (req, res) => {
 //Post job postings
 router.post("/job_postings", async (req, res) => {
   try {
-    const posting = await knex("job_postings")
-      .insert({
-        company_id: req.body.company_id,
-        job_title: req.body.job_title,
-        job_description: req.body.job_description,
-        location: req.body.location,
-        salary_range: req.body.salary_range,
-        job_type: req.body.job_type,
-        experience_level: req.body.experience_level,
-        qualifications: req.body.qualifications,
-        industry: req.body.industry,
-        posted_date: req.body.posted_date,
-        expiration_date: req.body.expiration_date,
-        status: req.body.status,
-        application_email_or_link: req.body.application_email_or_link,
-      })
-      .returning("*");
+    const posting = await knex("job_postings").insert({
+      company_id: req.body.company_id,
+      job_title: req.body.job_title,
+      job_description: req.body.job_description,
+      location: req.body.location,
+      salary_range: req.body.salary_range,
+      job_type: req.body.job_type,
+      experience_level: req.body.experience_level,
+      qualifications: req.body.qualifications,
+      industry: req.body.industry,
+      posted_date: req.body.posted_date,
+      expiration_date: req.body.expiration_date,
+      status: req.body.status,
+      application_email_or_link: req.body.application_email_or_link,
+    });
+    const insertedPosting = await knex("job_postings")
+      .where({ id: postedId })
+      .first();
+
+    res.json(insertedPosting);
     res.json(posting);
   } catch (error) {
     console.error(error.message);
