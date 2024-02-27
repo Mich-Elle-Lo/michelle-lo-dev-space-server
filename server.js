@@ -14,8 +14,6 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 app.use("/", userRoutes);
 
 app.listen(port, SERVER_IP, () => {
